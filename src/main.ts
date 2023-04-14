@@ -35,7 +35,7 @@ const createVideoFrame = async () => {
     return await createImageBitmap(canvas)
 }
 
-let speed = 0.001;
+let speed = 0.1;
 let sinWaveProgress = 0;
 
 const createAudioFrame = () => {
@@ -46,7 +46,7 @@ const createAudioFrame = () => {
     let buffer: Float32Array;
     for (let i = 0; i < config.nbAudioChannel; i++) {
         audioFrame[i] = buffer = new Float32Array(bufferLen);
-        for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin(sinWaveProgress + j * speed);
+        for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin((sinWaveProgress + j) * speed);
     }
     sinWaveProgress += bufferLen;
 
