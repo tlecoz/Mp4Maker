@@ -7,7 +7,7 @@ const config = new Mp4Config({
     height: 1080 * scale,
     fps: 60,
     audio: true,
-    nbAudioChannel: 1
+    nbAudioChannel: 2
 })
 
 
@@ -46,7 +46,7 @@ const createAudioFrame = () => {
     let buffer: Float32Array;
     for (let i = 0; i < config.nbAudioChannel; i++) {
         audioFrame[i] = buffer = new Float32Array(bufferLen);
-        for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin((sinWaveProgress + j) * speed);
+        for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin((i + sinWaveProgress + j) * speed / (i + 1));
     }
     sinWaveProgress += bufferLen;
 
