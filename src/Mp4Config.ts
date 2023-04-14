@@ -1,4 +1,5 @@
 export class Mp4Config {
+
     public width: number;
     public height: number;
     public fps: number = 30;
