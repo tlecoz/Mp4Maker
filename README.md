@@ -1,7 +1,6 @@
 # Mp4Maker
 
-Based on [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) , this class allow you to encode a MP4 file , frame by frame, 
-directly in the browser on the client-side using WebCodecs. 
+Based on [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) , this project provide a straight forward way to encode a MP4 file , frame by frame, directly in the browser on the client-side using WebCodecs. 
 
 The project contains only 2 classes : Mp4Maker and Mp4Config. 
 
