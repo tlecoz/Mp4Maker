@@ -14,23 +14,31 @@ const config = new Mp4Config({
 const mp4Maker = new Mp4Maker();
 mp4Maker.init(config);
 
+
+
+
+
+
+
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = config.width;
 canvas.height = config.height;
 document.body.appendChild(canvas);
 
-const durationInSecond = 5;
+const durationInSecond = 10;
 const nbFrame = config.fps * durationInSecond;
-let frameCount = 0;
 
 
-const createVideoFrame = async () => {
+const createVideoFrame = async (frameId: number) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff0000";
-    ctx.fillRect((canvas.width - 100) * frameCount / (nbFrame - 1), (canvas.height - 100) * frameCount / (nbFrame - 1), 100, 100);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "120px verdana";
+    ctx.fillText("frame : " + frameId, 30, 300);
+    ctx.fill();
+
 
     return await createImageBitmap(canvas)
 }
@@ -38,7 +46,7 @@ const createVideoFrame = async () => {
 let speed = 0.1;
 let sinWaveProgress = 0;
 
-const createAudioFrame = () => {
+const createAudioFrame = (frameId: number) => {
 
     const nbAudioChannel = config.nbAudioChannel;
     const bufferLen = config.audioFrameBufferLength;
@@ -48,37 +56,28 @@ const createAudioFrame = () => {
         audioFrame[i] = buffer = new Float32Array(bufferLen);
         for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin(i + (sinWaveProgress + j) * speed / (i + 1));
     }
-    sinWaveProgress += bufferLen;
+    sinWaveProgress = frameId * bufferLen;
 
     return audioFrame;
 }
 
-const createFrame = async () => {
+const createFrame = async (frameId: number) => {
+    return new Promise(async (onResolve: (o: { video: ImageBitmap, audio?: Float32Array[] }) => void, onError: () => void) => {
+        //console.log("f ", frameId)
+        const video = await createVideoFrame(frameId);
+        const audio = config.audio ? createAudioFrame(frameId) : undefined;
 
-
-
-    const video = await createVideoFrame();
-    const audio = config.audio ? createAudioFrame() : undefined;
-
-    mp4Maker.encodeFrame({
-        video,
-        audio
+        onResolve({
+            video,
+            audio
+        });
     })
 
-    frameCount++;
-
-    if (frameCount === nbFrame) {
-        mp4Maker.finish();
-
-    }
 }
 
+mp4Maker.fastEncode(nbFrame, createFrame)
 
-const animate = async () => {
-    if (frameCount === nbFrame) return;
-    await createFrame();
-    requestAnimationFrame(animate);
-}
-animate();
+
+
 
 

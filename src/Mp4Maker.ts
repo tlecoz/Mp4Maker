@@ -15,7 +15,12 @@ export class Mp4Maker {
     protected lastKeyFrame: number = -Infinity;
     protected frameGenerated: number = 0;
 
-
+    //---- fast encode properties ------------
+    protected autoEncode: boolean = false;
+    protected nbVideoChunkEncoded: number = 0;
+    protected nbAudioChunkEncoded: number = 0;
+    protected waiting: boolean = false;
+    protected encodeNextFrame: () => void;
 
 
     constructor() {
@@ -45,8 +50,17 @@ export class Mp4Maker {
 
         this.videoEncoder = new VideoEncoder({
             output: (chunk: EncodedVideoChunk, meta: any) => {
+                this.nbVideoChunkEncoded++;
+                this.muxer.addVideoChunk(chunk, meta);
 
-                this.muxer.addVideoChunk(chunk, meta)
+
+                if (this.waiting) {
+                    if (this.canEncode) {
+                        this.waiting = false;
+                        this.encodeNextFrame();
+                    }
+                }
+
             },
             error: e => console.error(e)
         })
@@ -62,7 +76,17 @@ export class Mp4Maker {
         if (this.config.audio) {
 
             this.audioEncoder = new AudioEncoder({
-                output: (chunk: EncodedAudioChunk, meta: any) => this.muxer.addAudioChunk(chunk, meta),
+                output: (chunk: EncodedAudioChunk, meta: any) => {
+                    this.nbAudioChunkEncoded++;
+                    this.muxer.addAudioChunk(chunk, meta);
+
+                    if (this.waiting) {
+                        if (this.canEncode) {
+                            this.waiting = false;
+                            this.encodeNextFrame();
+                        }
+                    }
+                },
                 error: e => console.error(e)
             });
 
@@ -80,16 +104,32 @@ export class Mp4Maker {
 
 
 
+    public get canEncode(): boolean {
+        return this.frameGenerated - this.nbVideoChunkEncoded < 50;
+    }
+
+
     public encodeFrame(frame: {
         video: ImageBitmap
         audio?: Float32Array[]
-    }) {
-        if (!this.muxer) return;
+    }): boolean {
+
+
+
+        if (!this.muxer) return false;
+
+        if (!this.canEncode) {
+            this.videoEncoder.flush();
+            this.waiting = true;
+        }
+
+        let needsKeyFrame = this.frameGenerated % 300 === 0;
 
         if (!this.recording) {
             this.recording = true;
             this.startTime = new Date().getTime();
             this.frameGenerated = 1;
+            needsKeyFrame = true;
         }
 
         const videoTimestamp = this.frameGenerated * this.config.videoBitrate / this.config.fps;
@@ -124,12 +164,6 @@ export class Mp4Maker {
         this.frameGenerated++;
 
 
-        //--------
-        let time = new Date().getTime() - this.startTime
-        let needsKeyFrame = time - this.lastKeyFrame >= 10000;
-        if (needsKeyFrame) this.lastKeyFrame = time;
-
-
 
         this.videoEncoder.encode(videoFrame, { keyFrame: needsKeyFrame });
         videoFrame.close();
@@ -139,6 +173,7 @@ export class Mp4Maker {
             audioData.close();
         }
 
+        return true;
     }
 
 
@@ -160,6 +195,7 @@ export class Mp4Maker {
         this.recording = false;
         this.lastKeyFrame = -Infinity;
         this.frameGenerated = 0;
+        this.waiting = false;
     }
 
 
@@ -175,5 +211,35 @@ export class Mp4Maker {
     }
 
 
+
+
+    public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ video: ImageBitmap, audio?: Float32Array[] }>) {
+
+        this.frameGenerated = 1;
+        let completed: boolean = false;
+        this.encodeNextFrame = async () => {
+            if (completed || this.waiting) return;
+
+            const frame: { video: ImageBitmap, audio?: Float32Array[] } = await createFrame(this.frameGenerated);
+
+            if (this.encodeFrame(frame)) {
+
+                if (this.frameGenerated === nbFrame) {
+
+                    completed = true;
+                    this.finish();
+                } else {
+
+                    if (!this.waiting) this.encodeNextFrame();
+                }
+            }
+
+
+
+
+
+        }
+        this.encodeNextFrame();
+    }
 
 }
