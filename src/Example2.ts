@@ -62,15 +62,21 @@ const createAudioFrame = (frameId: number) => {
 }
 
 const createFrame = async (frameId: number) => {
-    return new Promise(async (onResolve: (o: { video: ImageBitmap, audio?: Float32Array[] }) => void, onError: () => void) => {
+    return new Promise(async (onResolve: (o: { video: ImageBitmap, audio?: Float32Array[] }) => void, onError: (e: any) => void) => {
         //console.log("f ", frameId)
-        const video = await createVideoFrame(frameId);
-        const audio = config.audio ? createAudioFrame(frameId) : undefined;
 
-        onResolve({
-            video,
-            audio
-        });
+        try {
+            const video = await createVideoFrame(frameId);
+            const audio = config.audio ? createAudioFrame(frameId) : undefined;
+
+            onResolve({
+                video,
+                audio
+            });
+        } catch (e) {
+            onError(e);
+        }
+
     })
 
 }
