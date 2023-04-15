@@ -12,7 +12,7 @@ export class Mp4Maker {
     protected recording: boolean = false;
     protected audioTrack: any = null;
     protected intervalId: number = null;
-    protected lastKeyFrame: any;
+    protected lastKeyFrame: number = -Infinity;
     protected frameGenerated: number = 0;
 
 
@@ -36,15 +36,18 @@ export class Mp4Maker {
             audio: this.config.audio ? {
                 codec: 'aac',
                 sampleRate: this.config.audioSamplerate,
-                numberOfChannels: 1
+                numberOfChannels: this.config.nbAudioChannel
             } : undefined,
-            firstTimestampBehavior: 'offset' // Because we're directly pumping a MediaStreamTrack's data into it
+            firstTimestampBehavior: 'permissive' // Because we're directly pumping a MediaStreamTrack's data into it
         });
 
         //-------
 
         this.videoEncoder = new VideoEncoder({
-            output: (chunk: EncodedVideoChunk, meta: any) => this.muxer.addVideoChunk(chunk, meta),
+            output: (chunk: EncodedVideoChunk, meta: any) => {
+
+                this.muxer.addVideoChunk(chunk, meta)
+            },
             error: e => console.error(e)
         })
         this.videoEncoder.configure({
@@ -76,18 +79,20 @@ export class Mp4Maker {
 
 
 
+
     public encodeFrame(frame: {
         video: ImageBitmap
         audio?: Float32Array[]
     }) {
+        if (!this.muxer) return;
 
         if (!this.recording) {
             this.recording = true;
             this.startTime = new Date().getTime();
         }
 
-        const videoTimestamp = this.frameGenerated * (this.config.videoBitrate / this.config.fps);
-        const audioTimestamp = this.frameGenerated * (this.config.audioBitrate / this.config.fps);
+        const videoTimestamp = this.frameGenerated * this.config.videoBitrate / this.config.fps;
+        const audioTimestamp = this.frameGenerated * this.config.audioBitrate / this.config.fps;
 
         let videoFrame: VideoFrame = new VideoFrame(frame.video, {
             timestamp: videoTimestamp
@@ -119,9 +124,11 @@ export class Mp4Maker {
 
 
         //--------
+        let time = new Date().getTime() - this.startTime
+        let needsKeyFrame = time - this.lastKeyFrame >= 10000;
+        if (needsKeyFrame) this.lastKeyFrame = time;
 
-        let needsKeyFrame = new Date().getTime() - this.startTime >= 10000;
-        if (needsKeyFrame) this.startTime = new Date().getTime();
+
 
         this.videoEncoder.encode(videoFrame, { keyFrame: needsKeyFrame });
         videoFrame.close();
@@ -135,8 +142,11 @@ export class Mp4Maker {
 
 
     public async finish() {
+
         await this.videoEncoder.flush();
-        await this.audioEncoder.flush();
+        if (this.audioEncoder) await this.audioEncoder.flush();
+
+
         this.muxer.finalize();
 
         let buffer = this.muxer.target.buffer;
@@ -146,6 +156,9 @@ export class Mp4Maker {
         this.audioEncoder = null;
         this.config = null;
         this.muxer = null;
+        this.recording = false;
+        this.lastKeyFrame = -Infinity;
+        this.frameGenerated = 0;
     }
 
 

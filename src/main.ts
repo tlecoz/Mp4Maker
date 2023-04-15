@@ -5,7 +5,7 @@ const scale = 0.5;
 const config = new Mp4Config({
     width: 1920 * scale,
     height: 1080 * scale,
-    fps: 60,
+    fps: 30,
     audio: true,
     nbAudioChannel: 2
 })
@@ -55,10 +55,7 @@ const createAudioFrame = () => {
 
 const createFrame = async () => {
 
-    if (frameCount === nbFrame) {
-        mp4Maker.finish();
-        return;
-    }
+
 
     const video = await createVideoFrame();
     const audio = config.audio ? createAudioFrame() : undefined;
@@ -69,12 +66,18 @@ const createFrame = async () => {
     })
 
     frameCount++;
+    console.log(frameCount)
+
+    if (frameCount === nbFrame) {
+        mp4Maker.finish();
+
+    }
 }
 
 
-const animate = () => {
-    createFrame();
+const animate = async () => {
     if (frameCount === nbFrame) return;
+    await createFrame();
     requestAnimationFrame(animate);
 }
 animate();

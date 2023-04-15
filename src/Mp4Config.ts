@@ -34,6 +34,6 @@ export class Mp4Config {
     }
 
     public get audioFrameBufferLength(): number {
-        return this.audioSamplerate / this.fps;
+        return Math.floor(this.audioSamplerate / this.fps);
     }
 }
