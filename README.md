@@ -59,18 +59,20 @@ public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ v
     //use this method if you want to update the encoding process faster than requestAnimationFrame
     
     //nbFrame : the duration , in frame, of the video. 
-    //createFrame: a function that return an object {video:ImageBitmap,audio?:Float32Array[]} that represent the current frame to encode
+    //createFrame: a function that return an object {video:ImageBitmap,audio?:Float32Array[]} 
+    //             that represent the current frame to encode
     
     //the process will call createFrame(frameId) then call encodeFrame until frameId != nbFrame
     //when frameId === nbFrame, call finish 
     
-    //it also ensure that VideoEncoder cannot be saturated by data during the process and create some "breathing" to let VideoEncoder 
-    //the time to work efficiently 
+    //it also ensure that VideoEncoder cannot be saturated by data during the process and create 
+    //some "breathing" to let VideoEncoder the time to work efficiently and never be overbusy
 }
 
 ```
 
-check Example1.ts to see a complete example that expose how to encode a canvas-movie frame by frame with an audiotrack containing a basic generated sin wave 
+check Example1.ts to see a complete example that expose how to encode a canvas-movie frame by frame
+with an audiotrack containing a basic generated sin wave 
 
 -----
 
