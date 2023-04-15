@@ -105,7 +105,7 @@ export class Mp4Maker {
 
 
     public get canEncode(): boolean {
-        return this.frameGenerated - this.nbVideoChunkEncoded < 50;
+        return this.frameGenerated - this.nbVideoChunkEncoded < this.config.fastEncodingBufferLimit;
     }
 
 

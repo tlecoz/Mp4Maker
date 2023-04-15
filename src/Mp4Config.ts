@@ -23,6 +23,7 @@ export class Mp4Config {
         nbAudioChannel?: number,
         audioBitrate?: number,
         videoBitrate?: number,
+        fastEncodingBufferLimit?: number,
     }) {
 
         this.width = descriptor.width;
@@ -34,6 +35,7 @@ export class Mp4Config {
         if (descriptor.videoBitrate) this.videoBitrate = descriptor.videoBitrate;
         if (descriptor.nbAudioChannel) this.nbAudioChannel = descriptor.nbAudioChannel;
         if (descriptor.audioBitrate) this.audioBitrate = descriptor.audioBitrate;
+        if (descriptor.fastEncodingBufferLimit) this.fastEncodingBufferLimit = descriptor.fastEncodingBufferLimit;
     }
 
     public get audioFrameBufferLength(): number {
