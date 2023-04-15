@@ -44,7 +44,7 @@ const createAudioFrame = () => {
     const bufferLen = config.audioFrameBufferLength;
     const audioFrame = [];
     let buffer: Float32Array;
-    for (let i = 0; i < config.nbAudioChannel; i++) {
+    for (let i = 0; i < nbAudioChannel; i++) {
         audioFrame[i] = buffer = new Float32Array(bufferLen);
         for (let j = 0; j < bufferLen; j++) buffer[j] = Math.sin(i + (sinWaveProgress + j) * speed / (i + 1));
     }
