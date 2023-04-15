@@ -52,6 +52,6 @@ public finish(){
 check main.ts to see a complete example that expose how to encode a canvas-movie frame by frame with an audiotrack containing a basic generated sin wave 
 
 Here is a working demo : https://mp4maker.netlify.app/
-(well, it's a working demo on a computer. AAC encoding is not supported on mobile browser yet ; WebCodec is still a very recent feature, we have tp be a bit patient... )
+(well, it's a working demo on a computer. AAC encoding (and maybe VideoEncoding, not sure) is not supported on mobile browser yet ; WebCodec is still a very recent feature, we have tp be a bit patient... )
 
 
