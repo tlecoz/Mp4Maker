@@ -53,20 +53,19 @@ public finish(){
     //stop the encoder and save the video as an MP4 file
 }
 
+//----------
 
 public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ video: ImageBitmap, audio?: Float32Array[] }>) {
     //use this method if you want to update the encoding process faster than requestAnimationFrame
-    //
+    
     //nbFrame : the duration , in frame, of the video. 
     //createFrame: a function that return an object {video:ImageBitmap,audio?:Float32Array[]} that represent the current frame to encode
-    //
+    
     //the process will call createFrame(frameId) then call encodeFrame until frameId != nbFrame
     //when frameId === nbFrame, call finish 
-    //
+    
     //it also ensure that VideoEncoder cannot be saturated by data during the process and create some "breathing" to let VideoEncoder 
-    //the time to work efficiently : 
-    //    if( nbFrameSentToEncoder - nbFrameEncoded > config.fastEncodingBufferLimit) 
-
+    //the time to work efficiently 
 }
 
 ```
