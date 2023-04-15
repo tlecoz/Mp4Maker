@@ -73,6 +73,7 @@ Here is a working demo : https://mp4maker.netlify.app/
 -----
 
 I added a second example that show how to use Mp4Maker.fastEncode 
+
 Demo : https://mp4maker-fastencode.netlify.app/
 
 
