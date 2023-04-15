@@ -5,7 +5,7 @@ const scale = 0.5;
 const config = new Mp4Config({
     width: 1920 * scale,
     height: 1080 * scale,
-    fps: 100,
+    fps: 60,
     audio: true,
     nbAudioChannel: 2
 })

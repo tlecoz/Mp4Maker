@@ -8,7 +8,6 @@ export class Mp4Maker {
     protected muxer: any;
     protected videoEncoder: VideoEncoder;
     protected audioEncoder: AudioEncoder;
-    protected startTime: number;
     protected recording: boolean = false;
     protected audioTrack: any = null;
     protected intervalId: number = null;
@@ -118,16 +117,12 @@ export class Mp4Maker {
 
         if (!this.muxer) return false;
 
-        if (!this.canEncode) {
-            this.videoEncoder.flush();
-            this.waiting = true;
-        }
+
 
         let needsKeyFrame = this.frameGenerated % 300 === 0;
 
         if (!this.recording) {
             this.recording = true;
-            this.startTime = new Date().getTime();
             this.frameGenerated = 1;
             needsKeyFrame = true;
         }
@@ -173,6 +168,11 @@ export class Mp4Maker {
             audioData.close();
         }
 
+        if (!this.canEncode) {
+            this.videoEncoder.flush();
+            this.waiting = true;
+        }
+
         return true;
     }
 
@@ -215,6 +215,7 @@ export class Mp4Maker {
 
     public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ video: ImageBitmap, audio?: Float32Array[] }>) {
 
+        this.recording = true;
         this.frameGenerated = 1;
         let completed: boolean = false;
         this.encodeNextFrame = async () => {
@@ -222,17 +223,17 @@ export class Mp4Maker {
 
             const frame: { video: ImageBitmap, audio?: Float32Array[] } = await createFrame(this.frameGenerated);
 
-            if (this.encodeFrame(frame)) {
+            this.encodeFrame(frame)
 
-                if (this.frameGenerated === nbFrame) {
+            if (this.frameGenerated === nbFrame) {
 
-                    completed = true;
-                    this.finish();
-                } else {
+                completed = true;
+                this.finish();
+            } else {
 
-                    if (!this.waiting) this.encodeNextFrame();
-                }
+                if (!this.waiting) this.encodeNextFrame();
             }
+
 
 
 

@@ -1,7 +1,7 @@
 {
   "name": "mp4maker",
   "private": false,
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "main": "index.ts",
   "scripts": {
