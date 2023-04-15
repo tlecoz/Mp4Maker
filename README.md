@@ -23,6 +23,12 @@ Mp4Config is an object that describe the properties of the output mp4.
     public audioBitrate: number = 128000;
     public fileName: string = "output.mp4";
     
+    //--------used with fastEncode-----------
+    public fastEncodingBufferLimit: number = 50; 
+    //the maximum difference between the frame sent to VideoEncoder and the frame really encoded
+    //you may use a lower value if you encode with a very high resolution like 4k 
+    //---------------------------------------
+    
     public get audioFrameBufferLength(): number {
         return this.audioSamplerate / this.fps;
     }  
@@ -58,7 +64,8 @@ public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ v
     //when frameId === nbFrame, call finish 
     //
     //it also ensure that VideoEncoder cannot be saturated by data during the process and create some "breathing" to let VideoEncoder 
-    //the time to work efficiently 
+    //the time to work efficiently : 
+    //    if( nbFrameSentToEncoder - nbFrameEncoded > config.fastEncodingBufferLimit) 
 
 }
 
