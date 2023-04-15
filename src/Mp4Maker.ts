@@ -15,7 +15,6 @@ export class Mp4Maker {
     protected frameGenerated: number = 0;
 
     //---- fast encode properties ------------
-    protected autoEncode: boolean = false;
     protected nbVideoChunkEncoded: number = 0;
     protected nbAudioChunkEncoded: number = 0;
     protected waiting: boolean = false;
