@@ -51,4 +51,6 @@ public finish(){
 
 check main.ts to see a complete example that expose how to encode a canvas-movie frame by frame with an audiotrack containing a basic generated sin wave 
 
+Here is a working demo : https://mp4maker.netlify.app/
+
 
