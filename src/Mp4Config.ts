@@ -10,8 +10,8 @@ export class Mp4Config {
     public audioBitrate: number = 128000;
     public fileName: string = "output.mp4";
 
-    public fastEncodingBufferLimit: number = 50; //the maximum difference between the frame sent to VideoEncoder and the frame really encoded
-    //you may use a lower value if you encode with a very high resolution like 4k
+    public fastEncodingBufferLimit: number = 5; //the maximum difference between the frame sent to VideoEncoder and the frame really encoded
+
 
     constructor(descriptor: {
         width: number,
