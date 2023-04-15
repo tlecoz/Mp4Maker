@@ -28,7 +28,7 @@ Mp4Config is an object that describe the properties of the output mp4.
     }  
 ```
 
-Mp4Maker contains only 3 methods : 
+Mp4Maker contains only 4 methods : 
 
 ```
 public init(config: Mp4Config) {
@@ -47,11 +47,34 @@ public finish(){
     //stop the encoder and save the video as an MP4 file
 }
 
+
+public fastEncode(nbFrame: number, createFrame: (frameId: number) => Promise<{ video: ImageBitmap, audio?: Float32Array[] }>) {
+    //use this method if you want to update the encoding process faster than requestAnimationFrame
+    //
+    //nbFrame : the duration , in frame, of the video. 
+    //createFrame: a function that return an object {video:ImageBitmap,audio?:Float32Array[]} that represent the current frame to encode
+    //
+    //the process will call createFrame(frameId) then call encodeFrame until frameId != nbFrame
+    //when frameId === nbFrame, call finish 
+    //
+    //it also ensure that VideoEncoder cannot be saturated by data during the process and create some "breathing" to let VideoEncoder 
+    //the time to work efficiently 
+
+}
+
 ```
 
-check main.ts to see a complete example that expose how to encode a canvas-movie frame by frame with an audiotrack containing a basic generated sin wave 
+check Example1.ts to see a complete example that expose how to encode a canvas-movie frame by frame with an audiotrack containing a basic generated sin wave 
 
 Here is a working demo : https://mp4maker.netlify.app/
+
 (well, it's a working demo on a computer. AAC encoding (and maybe VideoEncoding, not sure) is not supported on mobile browser yet ; WebCodec is still a very recent feature, we have tp be a bit patient... )
+
+-----
+
+I added a second example that show how to use Mp4Maker.fastEncode 
+Demo : https://mp4maker-fastencode.netlify.app/
+
+
 
 
