@@ -1,8 +1,9 @@
 {
-  "name": "test_webcodec_mp4muxer_example",
-  "private": true,
-  "version": "0.0.0",
+  "name": "mp4maker",
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
+  "main": "index.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
