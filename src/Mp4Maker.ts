@@ -89,6 +89,7 @@ export class Mp4Maker {
         if (!this.recording) {
             this.recording = true;
             this.startTime = new Date().getTime();
+            this.frameGenerated = 1;
         }
 
         const videoTimestamp = this.frameGenerated * this.config.videoBitrate / this.config.fps;
