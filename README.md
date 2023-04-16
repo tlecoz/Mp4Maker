@@ -2,7 +2,7 @@
 
 Based on [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) , this project provide a straight forward way to encode a MP4 file , frame by frame, directly in the browser on the client-side using WebCodecs. 
 
-You can install de dependancies with this command :
+You can install the dependancies with this command :
 ```
 npm install mp4maker
 ```
