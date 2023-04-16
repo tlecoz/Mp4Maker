@@ -24,7 +24,7 @@ Mp4Config is an object that describe the properties of the output mp4.
     public fileName: string = "output.mp4";
     
     //--------used with fastEncode-----------
-    public fastEncodingBufferLimit: number = 50; 
+    public fastEncodingBufferLimit: number = 5; 
     //the maximum difference between the frame sent to VideoEncoder and the frame really encoded
     //you may use a lower value if you encode with a very high resolution like 4k 
     //---------------------------------------
