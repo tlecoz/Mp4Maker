@@ -2,7 +2,7 @@
 
 Based on [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) , this project provide a straight forward way to encode a MP4 file , frame by frame, directly in the browser on the client-side using WebCodecs. 
 
-You can install de dependancies with this command :
+You can install the dependancies with this command :
 ```
 npm install mp4maker
 ```
@@ -24,7 +24,7 @@ Mp4Config is an object that describe the properties of the output mp4.
     public fileName: string = "output.mp4";
     
     //--------used with fastEncode-----------
-    public fastEncodingBufferLimit: number = 50; 
+    public fastEncodingBufferLimit: number = 5; 
     //the maximum difference between the frame sent to VideoEncoder and the frame really encoded
     //you may use a lower value if you encode with a very high resolution like 4k 
     //---------------------------------------
