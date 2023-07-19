@@ -41,7 +41,7 @@ export class Mp4Maker {
                 sampleRate: this.config.audioSamplerate,
                 numberOfChannels: this.config.nbAudioChannel
             } : undefined,
-            firstTimestampBehavior: 'permissive' // Because we're directly pumping a MediaStreamTrack's data into it
+            firstTimestampBehavior: 'offset' // Because we're directly pumping a MediaStreamTrack's data into it
         });
 
         //-------
